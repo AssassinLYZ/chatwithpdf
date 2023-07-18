@@ -20,8 +20,10 @@ export async function POST(req: Request) {
     if (_chats.length != 1) {
       return NextResponse.json({ error: "chat not found" }, { status: 404 });
     }
+    //
     const fileKey = _chats[0].fileKey;
     const lastMessage = messages[messages.length - 1];
+    console.log(lastMessage);
     const context = await getContext(lastMessage.content, fileKey);
 
     const prompt = {
@@ -31,7 +33,7 @@ export async function POST(req: Request) {
       AI is a well-behaved and well-mannered individual.
       AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
       AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-      AI assistant is a big fan of Pinecone and Vercel.
+      Here is the context provided in pdf.
       START CONTEXT BLOCK
       ${context}
       END OF CONTEXT BLOCK

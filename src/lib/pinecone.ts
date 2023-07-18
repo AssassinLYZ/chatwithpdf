@@ -7,7 +7,7 @@ import {
   RecursiveCharacterTextSplitter,
 } from "@pinecone-database/doc-splitter";
 import { getEmbeddings } from "./embeddings";
-// import { convertToAscii } from "./utils";
+import { convertToAscii } from "./utils";
 
 export const getPineconeClient = () => {
   return new Pinecone({
@@ -34,15 +34,16 @@ export async function loadS3IntoPinecone(fileKey: string) {
   console.log("loading pdf into memory" + file_name);
   const loader = new PDFLoader(file_name);
   const pages = (await loader.load()) as PDFPage[];
-
+  console.log(pages);
   // 2. split and segment the pdf
   const documents = await Promise.all(pages.map(prepareDocument));
-  console.log(documents);
-  return documents;
+
+  // console.log(documents);
+  // return documents;
 
   // 3. vectorise and embed individual documents
   const vectors = await Promise.all(documents.flat().map(embedDocument));
-
+  console.log(vectors);
   // 4. upload to pinecone
   const client = await getPineconeClient();
   const pineconeIndex = await client.index("chatpdf");

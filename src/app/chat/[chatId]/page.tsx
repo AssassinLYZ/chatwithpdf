@@ -1,0 +1,54 @@
+import ChatComponent from "@/components/ChatComponent";
+import ChatSideBar from "@/components/ChatSideBar";
+import PDFViewer from "@/components/PDFViewer";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
+import { checkSubscription } from "@/lib/subscription";
+import { auth } from "@clerk/nextjs";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import React from "react";
+
+type Props = {
+  params: {
+    chatId: string;
+  };
+};
+
+const ChatPage = async ({ params: { chatId } }: Props) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return redirect("/sign-in");
+  }
+  const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
+  if (!_chats) {
+    return redirect("/");
+  }
+  if (!_chats.find((chat) => chat.id === parseInt(chatId))) {
+    return redirect("/");
+  }
+
+  const currentChat = _chats.find((chat) => chat.id === parseInt(chatId));
+  const isPro = await checkSubscription();
+  const showSlide = () => {};
+
+  return (
+    <div className="flex max-h-screen ">
+      <div className="flex w-full max-h-screen ">
+        {/* chat sidebar */}
+        <ChatSideBar chats={_chats} chatId={parseInt(chatId)} isPro={isPro} />
+        {/* chat component */}
+        {/* <div className=""> */}
+        <ChatComponent chatId={parseInt(chatId)} />
+        {/* </div> */}
+        {/* pdf viewer */}
+        <div className="max-h-screen oveflow-scroll flex-[3] hidden md:block">
+          <PDFViewer pdfUrl={currentChat?.pdfUrl || ""} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ChatPage;

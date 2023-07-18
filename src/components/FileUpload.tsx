@@ -7,6 +7,7 @@ import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Elsie } from "next/font/google";
 
 // https://github.com/aws/aws-sdk-js-v3/issues/4126
 
@@ -49,11 +50,14 @@ const FileUpload = () => {
         }
         mutate(data, {
           onSuccess: (data) => {
-            console.log(data, 123);
-            toast.success("Chat created!");
-            // router.push(`/chat/${chat_id}`);
+            if (data.isIllegal) {
+              toast.success("Chat created!");
+              router.push(`/chat/${data.chat_id}`);
+            } else {
+              toast.error("No Free use, Please Upgrade.");
+            }
           },
-          onError: (err) => {
+          onError: (err: any) => {
             toast.error("Error creating chat");
             console.error(err);
           },
