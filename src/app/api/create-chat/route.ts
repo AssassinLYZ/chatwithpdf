@@ -17,7 +17,7 @@ export async function POST(req: Request, res: Response) {
   try {
     const body = await req.json();
     const { file_key, file_name } = body;
-    console.log(file_key, file_name, isPro);
+    // console.log(file_key, file_name, isPro);
     let pdfNum;
     if (isPro) {
       const number = await db
@@ -25,7 +25,6 @@ export async function POST(req: Request, res: Response) {
         .from(chats)
         .where(eq(chats.userId, userId));
       pdfNum = number.length;
-      console.log(pdfNum);
       if (pdfNum >= FreePdfCount.number) {
         return NextResponse.json(
           {
