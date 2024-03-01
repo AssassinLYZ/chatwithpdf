@@ -19,7 +19,7 @@ export async function POST(req: Request, res: Response) {
     const { file_key, file_name } = body;
     // console.log(file_key, file_name, isPro);
     let pdfNum;
-    if (isPro) {
+    if (!isPro) {
       const number = await db
         .select()
         .from(chats)
